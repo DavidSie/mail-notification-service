@@ -1,6 +1,6 @@
 module github.com/DavidSie/notification-service
 
-go 1.19
+go 1.21
 
 require gopkg.in/confluentinc/confluent-kafka-go.v1 v1.8.2
 
