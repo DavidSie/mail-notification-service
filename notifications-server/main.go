@@ -15,7 +15,7 @@ import (
 var wg sync.WaitGroup
 
 func main() {
-	nsc := model.NotificationServerConfig{kafka.ConfigMap{
+	nsc := model.NotificationServerConfig{KafkaConfigMap: kafka.ConfigMap{
 		"bootstrap.servers":               "localhost:9092",
 		"security.protocol":               "plaintext",
 		"group.id":                        "foo",
@@ -53,9 +53,15 @@ func HandleEmailRequests(kcm *kafka.ConfigMap, mailingService model.MailingServi
 		switch e := ev.(type) {
 		case *kafka.Message:
 			emailRequest := model.EmailRequest{}
-			json.Unmarshal(e.Value, &emailRequest)
+			err := json.Unmarshal(e.Value, &emailRequest)
+			if err != nil {
+				fmt.Printf("Error while unmarshaling kafka message to emailRequest %v", err)
+			}
 
-			mailingService.Send(emailRequest)
+			err = mailingService.Send(emailRequest)
+			if err != nil {
+				fmt.Printf("Error while sending mail %v", err)
+			}
 			// application-specific processing
 		case kafka.Error:
 			fmt.Fprintf(os.Stderr, "%% Error: %v\n", e)

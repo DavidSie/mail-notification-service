@@ -19,30 +19,33 @@ func main() {
 		"security.protocol": "plaintext",
 		"client.id":         "Test client",
 		"acks":              "all"})
-	defer p.Close()
 
 	if err != nil {
 		fmt.Printf("Failed to create producer: %s\n", err)
 		os.Exit(1)
 	}
+	defer p.Close()
 
 	wb := sync.WaitGroup{}
 	for i := 0; i < 10; i++ {
 		wb.Add(1)
-		go func() {
+		go func(iterator int) {
 			defer wb.Done()
 
 			emailRequest := model.EmailRequest{
 				Recipients: []model.Email{"someone@mail.com"},
 				Sender:     "iam.sender@email.com",
-				Title:      fmt.Sprintf("Message number: %d", i),
+				Title:      fmt.Sprintf("Message number: %d", iterator),
 				Message:    "",
 			}
 
 			r := rand.Intn(60)
 			time.Sleep(time.Duration(r) * time.Second)
-			RequestMailSending(emailRequest, p)
-		}()
+			err = RequestMailSending(emailRequest, p)
+			if err != nil {
+				fmt.Printf("Error while requesting email sending: %v\n", err)
+			}
+		}(i)
 	}
 	wb.Wait()
 
