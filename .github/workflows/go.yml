@@ -32,13 +32,27 @@ jobs:
       with:
         username: ${{secrets.DOCKERHUB_USERNAME}}
         password: ${{secrets.DOCKERHUB_TOKEN}}
-
     - name: build and push docker image to registry
+      if: ${{ ! startsWith(github.ref_name, 'main') && ! startsWith(github.ref, 'refs/tags/') }}
       uses: docker/build-push-action@v5
       with:
         context: ./
         push: true
         tags: davidsie/notification-service:${{ github.head_ref }}
+    - name: build and push docker image to registry on main branch
+      if: ${{ startsWith(github.ref_name, 'main') }}
+      uses: docker/build-push-action@v5
+      with:
+        context: ./
+        push: true
+        tags: davidsie/notification-service:latest
+    - name: build and push new version docker image to registry
+      if: ${{ startsWith(github.ref, 'refs/tags/') }}
+      uses: docker/build-push-action@v5
+      with:
+        context: ./
+        push: true
+        tags: davidsie/notification-service:v${{ github.ref_name }}
   golang-test:
     runs-on: ${{ matrix.os }}
     strategy:
