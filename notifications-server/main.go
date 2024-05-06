@@ -9,26 +9,34 @@ import (
 
 	"github.com/DavidSie/notification-service/pkg/mail"
 	"github.com/DavidSie/notification-service/pkg/model"
+
 	"gopkg.in/confluentinc/confluent-kafka-go.v1/kafka"
 )
 
 var wg sync.WaitGroup
+var app model.AppConfig
 
 func main() {
+
+	populateConfig(&app)
 	nsc := model.NotificationServerConfig{KafkaConfigMap: kafka.ConfigMap{
-		"bootstrap.servers":               "localhost:9092",
-		"security.protocol":               "plaintext",
-		"group.id":                        "foo",
-		"go.application.rebalance.enable": true},
+		"bootstrap.servers":               app.Kafka.BootstrapServers,
+		"security.protocol":               app.Kafka.SecurityProtocol,
+		"group.id":                        app.Kafka.GroupID,
+		"go.application.rebalance.enable": app.Kafka.GoApplicationRebalanceEnable},
 	}
-	mailSrv := mail.Mailer{}
+	app.MailChannel = make(chan model.EmailRequest)
+	defer close(app.MailChannel)
+	mailSrv := mail.Mailer{AppConfig: app}
+	mailSrv.ListenForMail()
+
 	// for each notification channel create on go routine
 	wg.Add(1)
-	go HandleEmailRequests(&nsc.KafkaConfigMap, mailSrv)
+	go HandleEmailRequests(&nsc.KafkaConfigMap, app)
 	wg.Wait()
 }
 
-func HandleEmailRequests(kcm *kafka.ConfigMap, mailingService model.MailingService) {
+func HandleEmailRequests(kcm *kafka.ConfigMap, app model.AppConfig) {
 	defer wg.Done()
 	consumer, err := kafka.NewConsumer(kcm)
 	defer func() {
@@ -57,12 +65,7 @@ func HandleEmailRequests(kcm *kafka.ConfigMap, mailingService model.MailingServi
 			if err != nil {
 				fmt.Printf("Error while unmarshaling kafka message to emailRequest %v", err)
 			}
-
-			err = mailingService.Send(emailRequest)
-			if err != nil {
-				fmt.Printf("Error while sending mail %v", err)
-			}
-			// application-specific processing
+			app.MailChannel <- emailRequest
 		case kafka.Error:
 			fmt.Fprintf(os.Stderr, "%% Error: %v\n", e)
 			run = false

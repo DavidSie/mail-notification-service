@@ -1,0 +1,13 @@
+smtp:
+    host:            localhost
+    port:            1025
+    keep_alive:      false
+    connect_timeout: 10s
+    send_timeout:    10s
+    auth_type: # Plain, Login, CRAMMD5, None, Auto
+    encryption: # None, SSL, TLS, SSL/TLS, STARTTLS
+kafka:
+    bootstrap_servers:               localhost:9092
+    security_protocol:               plaintext
+    group_id:                        foo
+    go_application_rebalance_enable: true

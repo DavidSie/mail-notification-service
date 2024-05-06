@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/DavidSie/notification-service/pkg/model"
+	mail "github.com/xhit/go-simple-mail/v2"
 	"gopkg.in/confluentinc/confluent-kafka-go.v1/kafka"
 )
 
@@ -27,16 +28,17 @@ func main() {
 	defer p.Close()
 
 	wb := sync.WaitGroup{}
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 2; i++ {
 		wb.Add(1)
 		go func(iterator int) {
 			defer wb.Done()
 
 			emailRequest := model.EmailRequest{
-				Recipients: []model.Email{"someone@mail.com"},
-				Sender:     "iam.sender@email.com",
-				Title:      fmt.Sprintf("Message number: %d", iterator),
-				Message:    "",
+				Recipients:         []string{"someone@mail.com"},
+				Sender:             "iam.sender@email.com",
+				Title:              fmt.Sprintf("Message number: %d", iterator),
+				Message:            fmt.Sprintf("<strong>Message number: %d</strong><br>Dear recipient, I'm glad you got your mail number %d", iterator, iterator),
+				MessageContentType: mail.TextHTML,
 			}
 
 			r := rand.Intn(60)
