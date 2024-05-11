@@ -26,7 +26,10 @@ jobs:
 
     - name: Build
       run: go build -v ./...
-        
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
     - name: login to docker registry
       uses: docker/login-action@v3
       with:
@@ -37,6 +40,7 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: ./
+        platforms:  linux/amd64,linux/arm64
         push: true
         tags: davidsie/notification-service:${{ github.head_ref }}
     - name: build and push docker image to registry on main branch
@@ -44,6 +48,7 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: ./
+        platforms:  linux/amd64,linux/arm64
         push: true
         tags: davidsie/notification-service:latest
     - name: build and push new version docker image to registry
@@ -51,6 +56,7 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: ./
+        platforms:  linux/amd64,linux/arm64
         push: true
         tags: davidsie/notification-service:v${{ github.ref_name }}
   golang-test:
