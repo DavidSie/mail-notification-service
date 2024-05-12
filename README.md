@@ -1,5 +1,13 @@
+# Mail notification service
 
-## Development
+This is a microservice aiming at sending mails upon receiving Mail reques via Kafka event.
+
+# Development
+
+In order to run and test localy the service, one needs smtp mail server and kafka, and producer of events.
+For SMTP server one can use `mailhog`, to produce events one can use notifications-request-producer.
+
+
 
 ### Start Kafka container 
 
@@ -23,10 +31,16 @@ brew services start mailhog
 
 more info: https://github.com/mailhog/MailHog
 
-### Start applications
 
+### Events producer
+
+```bash
+go run ./notifications-request-producer/ 
 ```
-go run ./notifications-request-producer/
-go run ./notifications-server/
 
+### Start notififaction server
+
+```bash
+
+go run ./notifications-server/
 ```
