@@ -10,7 +10,7 @@ import (
 	"github.com/DavidSie/notification-service/pkg/mail"
 	"github.com/DavidSie/notification-service/pkg/model"
 
-	"gopkg.in/confluentinc/confluent-kafka-go.v1/kafka"
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 )
 
 var wg sync.WaitGroup

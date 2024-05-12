@@ -5,8 +5,8 @@ import (
 
 	"crypto/tls"
 
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	mail "github.com/xhit/go-simple-mail/v2"
-	"gopkg.in/confluentinc/confluent-kafka-go.v1/kafka"
 )
 
 const (
