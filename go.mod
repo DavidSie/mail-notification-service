@@ -1,6 +1,6 @@
 module github.com/DavidSie/notification-service
 
-go 1.21
+go 1.22.2
 
 require (
 	github.com/DavidSie/go-models v0.1.0
