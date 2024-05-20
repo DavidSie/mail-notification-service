@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/DavidSie/notification-service/pkg/model"
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
+	models "github.com/DavidSie/go-models/pkg/model"
 	mail "github.com/xhit/go-simple-mail/v2"
 )
 
@@ -33,7 +33,7 @@ func main() {
 		go func(iterator int) {
 			defer wb.Done()
 
-			emailRequest := model.EmailRequest{
+			emailRequest := models.EmailRequest{
 				Recipients:         []string{"someone@mail.com"},
 				Sender:             "iam.sender@email.com",
 				Title:              fmt.Sprintf("Message number: %d", iterator),
@@ -53,11 +53,11 @@ func main() {
 
 }
 
-func RequestMailSending(emailRequest model.EmailRequest, p *kafka.Producer) error {
+func RequestMailSending(emailRequest models.EmailRequest, p *kafka.Producer) error {
 
 	delivery_chan := make(chan kafka.Event, 10000)
 
-	topic := model.RequestEmailTopic
+	topic := models.RequestEmailTopic
 
 	fmt.Printf("Requesting email send to: %s \n", emailRequest.Recipients)
 	value, err := json.Marshal(emailRequest)

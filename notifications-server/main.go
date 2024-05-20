@@ -9,6 +9,7 @@ import (
 
 	"github.com/DavidSie/notification-service/pkg/mail"
 	"github.com/DavidSie/notification-service/pkg/model"
+	models "github.com/DavidSie/go-models/pkg/model"
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 )
@@ -25,7 +26,7 @@ func main() {
 		"group.id":                        app.Kafka.GroupID,
 		"go.application.rebalance.enable": app.Kafka.GoApplicationRebalanceEnable},
 	}
-	app.MailChannel = make(chan model.EmailRequest)
+	app.MailChannel = make(chan models.EmailRequest)
 	defer close(app.MailChannel)
 	mailSrv := mail.Mailer{AppConfig: app}
 	mailSrv.ListenForMail()
@@ -48,7 +49,7 @@ func HandleEmailRequests(kcm *kafka.ConfigMap, app model.AppConfig) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	topics := []string{model.RequestEmailTopic}
+	topics := []string{models.RequestEmailTopic}
 
 	err = consumer.SubscribeTopics(topics, nil)
 	if err != nil {
@@ -60,7 +61,7 @@ func HandleEmailRequests(kcm *kafka.ConfigMap, app model.AppConfig) {
 		ev := consumer.Poll(100)
 		switch e := ev.(type) {
 		case *kafka.Message:
-			emailRequest := model.EmailRequest{}
+			emailRequest := models.EmailRequest{}
 			err := json.Unmarshal(e.Value, &emailRequest)
 			if err != nil {
 				fmt.Printf("Error while unmarshaling kafka message to emailRequest %v", err)

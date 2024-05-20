@@ -3,6 +3,7 @@ module github.com/DavidSie/notification-service
 go 1.21
 
 require (
+	github.com/DavidSie/go-models v0.1.0
 	github.com/confluentinc/confluent-kafka-go/v2 v2.4.0
 	github.com/spf13/viper v1.18.2
 	github.com/xhit/go-simple-mail/v2 v2.16.0
@@ -10,7 +11,6 @@ require (
 
 require (
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
-	github.com/go-test/deep v1.1.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect

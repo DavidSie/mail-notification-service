@@ -7,11 +7,9 @@ import (
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	mail "github.com/xhit/go-simple-mail/v2"
+	models "github.com/DavidSie/go-models/pkg/model"
 )
 
-const (
-	RequestEmailTopic string = "RequestEmailTopic"
-)
 
 type StmpConfig struct {
 	Host           string          `yaml:"host"`
@@ -35,20 +33,9 @@ type KafkaConfig struct {
 type AppConfig struct {
 	Stmp        StmpConfig        `yaml:"smtp"`
 	Kafka       KafkaConfig       `yaml:"kafka"`
-	MailChannel chan EmailRequest `yaml:"mail_channel"`
+	MailChannel chan models.EmailRequest `yaml:"mail_channel"`
 }
 
-// type EmailRequeststore information regarding requested email
-type EmailRequest struct {
-	Recipients    []string `yaml:"recipients"`
-	CcRecipients  []string `yaml:"cc_recipients"`
-	BccRecipients []string `yaml:"bcc_recipients"`
-	// If Sender cannot be set iw will be ignored
-	Sender             string           `yaml:"sender"`
-	Title              string           `yaml:"title"`
-	Message            string           `yaml:"message"`
-	MessageContentType mail.ContentType `yaml:"message_content_type"`
-}
 
 type NotificationServerConfig struct {
 	KafkaConfigMap kafka.ConfigMap
