@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/DavidSie/notification-service/pkg/model"
+	models "github.com/DavidSie/go-models/pkg/model"
 	mail "github.com/xhit/go-simple-mail/v2"
 )
 
@@ -25,11 +26,11 @@ func (m Mailer) ListenForMail() {
 
 }
 
-func (m Mailer) Send(emailRequest model.EmailRequest) error {
+func (m Mailer) Send(emailRequest models.EmailRequest) error {
 	return m.sendMail(emailRequest)
 }
 
-func (m Mailer) sendMail(emailRequest model.EmailRequest) error {
+func (m Mailer) sendMail(emailRequest models.EmailRequest) error {
 	server := mail.NewSMTPClient()
 	server.Host = m.AppConfig.Stmp.Host
 	server.Port = m.AppConfig.Stmp.Port
